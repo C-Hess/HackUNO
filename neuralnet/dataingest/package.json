@@ -2,10 +2,16 @@
   "name": "hackuno",
   "version": "1.0.0",
   "description": "Team: Clash of code",
+<<<<<<< HEAD
   "main": "index.js",
   "type": "module",
   "scripts": {
     "start": "node --experimental-modules index.js",
+=======
+  "main": "index.mjs",
+  "scripts": {
+    "start": "node --experimental-modules index.mjs",
+>>>>>>> 7ea2f39b52c2125b893fa2710a82abec3508f716
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -17,5 +23,12 @@
   "bugs": {
     "url": "https://github.com/C-Hess/HackUNO/issues"
   },
-  "homepage": "https://github.com/C-Hess/HackUNO#readme"
+  "homepage": "https://github.com/C-Hess/HackUNO#readme",
+  "devDependencies": {
+    "@babel/core": "^7.8.7",
+    "@babel/node": "^7.8.7"
+  },
+  "dependencies": {
+    "moment": "^2.24.0"
+  }
 }
