@@ -38,7 +38,7 @@ print("Input Col stddevs:", incol_stds)
 ntin = [[(cval-cmean)/dev for cval, cmean, dev in zip(row, incol_means,incol_stds)] for row in ntin]
 
 print("Extending input data to last few days...")
-tothb= 8
+tothb= 7
 extdat=[]
 for i, row in enumerate(ntin):
     extrow=[]
@@ -69,17 +69,20 @@ for inar, outar in zip(ntin, ntout):
             combinein.append(inar)
             combineout.append(outar)
             last_was_accident = False
+        else:
+            combinein.append(inar)
+            combineout.append(outar)
+
+
 # Whitening out
-outcol_means = list(map(mean, zip(*ntout)))
-outcol_stds = list(map(stdev, zip(*ntout)))
-print("Output Col means:", outcol_means)
-print("Output Col stddevs:", outcol_stds)
-ntout = [[(cval-cmean)/dev for cval, cmean, dev in zip(row, outcol_means,outcol_stds)] for row in ntout]
+# outcol_means = list(map(mean, zip(*combineout)))
+# outcol_stds = list(map(stdev, zip(*combineout)))
+# print("Output Col means:", outcol_means)
+# print("Output Col stddevs:", outcol_stds)
+# combineout = [[(cval-cmean)/dev for cval, cmean, dev in zip(row, outcol_means,outcol_stds)] for row in combineout]
 
 # Split training-testing sets
 trainend_ind = round(0.8 * len(combinein))
-trainin = combinein[:trainend_ind]
-trainout = combineout[:trainend_ind]
 testin = combinein[trainend_ind:]
 testout = combineout[trainend_ind:]
 
@@ -88,15 +91,15 @@ testout = combineout[trainend_ind:]
 #y = dataset[:,8]
 # define the keras model
 model = Sequential()
-model.add(Dense(tothb*6, input_dim=6*tothb, activation='relu', kernel_regularizer=regularizers.l2(0.01)))
-model.add(Dense(10, activation='relu', kernel_regularizer=regularizers.l2(0.01)))
+model.add(Dense(50, input_dim=6*tothb, activation='relu', kernel_regularizer=regularizers.l2(0.01)))
+model.add(Dense(20, activation='relu', kernel_regularizer=regularizers.l2(0.01)))
 model.add(Dense(1, activation='linear'))
 # compile the keras model
-model.compile(loss='mean_squared_error', metrics=['MSE'], optimizer="adamax")
+model.compile(loss='mean_squared_error', metrics=['MSE'], optimizer="adam")
 # fit the keras model on the dataset
-model.fit(np.array(combinein), np.array(combineout), epochs=100, batch_size=5, verbose=1, validation_split=0.1)
+model.fit(np.array(combinein), np.array(combineout), epochs=150, batch_size=10, verbose=1, validation_split=0.1)
 # evaluate the keras mode
 _, mse = model.evaluate(np.array(testin), np.array(testout))
 print('MSE: %.2f' % mse)
-
+print("NN Input: ", np.array(testin[0:5]) )
 print("NN Out: ", model.predict(np.array(testin[0:5])), " Actual out: ", testout[0:5])
