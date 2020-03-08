@@ -1,64 +1,84 @@
 import { Menu, Dropdown, Button, message, Tooltip } from 'antd';
 import { DownOutlined, UserOutlined } from '@ant-design/icons';
-import React from "react"
-import { Select } from 'antd';
+import React from "react";
+import cloud from "../cloud.jpeg";
+import { Select, Row, Col } from 'antd';
 import "antd/dist/antd.css";
+import  {Link, RouteComponentProps} from "react-router-dom";
+import '../App.css';
+import { DatePicker } from 'antd';
+
 const { Option } = Select;
 
 class DropDown extends React.Component {
-    constructor(){
-        super();
-        this.state = {
-            error:null,
-            isload: false,
-            school : []
-        }
-
+    constructor(props){
+        super(props);
     }
-    componentDidMount(){
-        fetch("http://localhost:5000/").then(res => res.json()).then(
+    state = {
+        error: null,
+        isLoaded: false,
+        school: []
+    }
+    componentDidMount() {
+        fetch(`localhost:5000/where`)
+        .then(res => res.json())
+        .then(
             (result) => {
-                this.state({
-                    isload : true,
-                    school : result.school  
+                this.setState({
+                    isLoaded: true,
+                    school: result.school  
 
                 });
             },
             (error) => {
                 this.setState({
-                    isload:true,
+                    isLoaded: true,
                     error
-                })
+                });
             }
         )
     }
+
+ onChange(date, dateString) {
+    console.log(date, dateString);
+  }
     
 handleChange = (value)  => {
-  console.log(`selected ${value}`);
+  this.props.history.push(`/schoolResponce/${value}`);
 }
 
     render(){
-        const { error, isLoaded, school } = this.state;
-        if(error) {
-            return <div> <h1> ERROR </h1> </div>;
-            console.log(error);
-        }else if(!isLoaded){
+        //if(error) {
+          //  return <div> <h1> ERROR </h1> </div>;
+           // console.log(error);
+         if(!this.state.isLoaded){
            return <div><h1> LOADING! </h1> </div>
         }else {
-       return( 
-        
-        <div>
-            <center>
-        <Select defaultValue="SELECT SCHOOL" style={{ width: 500 }} allowClear>
-            <Option value="lucy">Lucy</Option>
-        </Select>
-        </center>
-      </div>);
-        }
+      //  const options = this.state.school.map((x,i) => {
+        //    <Option value={x} key={i}>{x}</Option>
+        //});
+        console.log(this.state.school)
+        return( 
+            
+            <div className="background">
+                    <Row style={{width: "100%", height: "100%"}} type="flex" justify="center" align="middle">
+                    <Col>
+                    <Select onChange={this.handleChange} defaultValue="SELECT SCHOOL" style={{ width: 1200 }} allowClear>
+                <Option value="des moines">des moines</Option>
+
+            </Select>
+            <div>
+    <DatePicker onChange={this.onChange} />
+    <DatePicker onChange={this.onChange} picker="week" />
+    <DatePicker onChange={this.onChange} picker="month" />
+    <DatePicker onChange={this.onChange} picker="year" />
+  </div>
+                    </Col>
+
+            </Row>
+        </div>);
+       }
     }
-
-
-
 }
 
 
