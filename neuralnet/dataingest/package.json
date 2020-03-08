@@ -2,9 +2,9 @@
   "name": "hackuno",
   "version": "1.0.0",
   "description": "Team: Clash of code",
-  "main": "index.js",
+  "main": "index.mjs",
   "scripts": {
-    "start": "node index.js",
+    "start": "node --experimental-modules index.mjs",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -20,5 +20,8 @@
   "devDependencies": {
     "@babel/core": "^7.8.7",
     "@babel/node": "^7.8.7"
+  },
+  "dependencies": {
+    "moment": "^2.24.0"
   }
 }
