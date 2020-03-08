@@ -27,13 +27,20 @@ print("Converting data to float...")
 ntin = [list(map(float, row)) for row in ntin ]
 ntout = [list(map(float, row)) for row in ntout ]
 
-print("Centering data...")
-col_means = list(map(mean, zip(*ntin)))
-col_stds = list(map(stdev, zip(*ntin)))
+print("Converging outputs...")
+ntout = [[sum(row)] for row in ntout]
 
-print("Col means:", col_means)
-print("Col stddevs:", col_stds)
-ntin = [[(cval-cmean)/dev for cval, cmean, dev in zip(row, col_means,col_stds)] for row in ntin]
+print("Centering data...")
+incol_means = list(map(mean, zip(*ntin)))
+incol_stds = list(map(stdev, zip(*ntin)))
+print("Input Col means:", incol_means)
+print("Input Col stddevs:", incol_stds)
+ntin = [[(cval-cmean)/dev for cval, cmean, dev in zip(row, incol_means,incol_stds)] for row in ntin]
+outcol_means = list(map(mean, zip(*ntout)))
+outcol_stds = list(map(stdev, zip(*ntout)))
+print("Output Col means:", outcol_means)
+print("Output Col stddevs:", outcol_stds)
+ntout = [[(cval-cmean)/dev for cval, cmean, dev in zip(row, outcol_means,outcol_stds)] for row in ntout]
 
 print("Extending input data to last few days...")
 tothb= 8
@@ -46,9 +53,10 @@ for i, row in enumerate(ntin):
     extdat.append(extrow)
 ntin = extdat
 
-print("Creating out index..." )
-
-ntout = [[sum(row)] for row in ntout]
+# print("Creating out index..." )
+# weights = [1, 1, 1, 1]
+# ntout = [[sum([x*w for x, w in zip(row,weights)])] for row in ntout]
+# print(ntout)
 
 print("Biasing training data...")
 combineout = []
@@ -60,12 +68,12 @@ for inar, outar in zip(ntin, ntout):
         if sum(outar) > 0:
             combinein.append(inar)
             combineout.append(outar)
-            last_was_accident = True
+        last_was_accident = True
     else:
         if sum(outar) == 0:
             combinein.append(inar)
             combineout.append(outar)
-            last_was_accident = False
+        last_was_accident = False
 
 # Split training-testing sets
 trainend_ind = round(0.8 * len(combinein))
@@ -84,11 +92,11 @@ model.add(Dense(64, activation='relu', kernel_regularizer=regularizers.l2(0.01))
 model.add(Dense(32, activation='relu'))
 model.add(Dense(1, activation='relu'))
 # compile the keras model
-model.compile(loss='mean_squared_error', metrics=['accuracy'], optimizer="adamax")
+model.compile(loss='mean_squared_error', metrics=['MSE'], optimizer="adamax")
 # fit the keras model on the dataset
 model.fit(np.array(combinein), np.array(combineout), epochs=10, batch_size=5, verbose=1, validation_split=0.1)
 # evaluate the keras mode
-_, accuracy = model.evaluate(np.array(testin), np.array(testout))
-print('Accuracy: %.2f' % (accuracy*100))
+_, mse = model.evaluate(np.array(testin), np.array(testout))
+print('MSE: %.2f' % mse)
 
 print("NN Out: ", model.predict(np.array(testin[0:5])), " Actual out: ", testout[0:5])
