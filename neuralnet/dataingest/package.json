@@ -16,5 +16,9 @@
   "bugs": {
     "url": "https://github.com/C-Hess/HackUNO/issues"
   },
-  "homepage": "https://github.com/C-Hess/HackUNO#readme"
+  "homepage": "https://github.com/C-Hess/HackUNO#readme",
+  "devDependencies": {
+    "@babel/core": "^7.8.7",
+    "@babel/node": "^7.8.7"
+  }
 }
